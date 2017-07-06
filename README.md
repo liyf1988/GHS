@@ -8,6 +8,7 @@ Draw Monte Carlo samples from the posterior distribution under the graphical hor
 USAGE
 -----
 [GHS_omega_save,GHS_lambda_sq_save,GHS_tau_sq_save] = GHS(S,50,100,10000)
+
 GHS_est = mean(GHS_omega_save,3)
 
 ARGUMENTS
