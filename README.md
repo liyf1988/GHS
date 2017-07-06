@@ -43,4 +43,4 @@ Makalic, E. and Schmidt, D. F. (2016). A simple sampler for the horseshoe estima
 
 EXAMPLES
 --------
-See GHS_samplecode.txt
+See GHS_samplecode.m
