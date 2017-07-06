@@ -22,17 +22,17 @@ omega_save = zeros(p,p,nmc);
 lambda_sq_save = zeros(p*(p-1)/2,nmc);
 tau = zeros(nmc);
 
-ind_noi_all = zeros(p-1,p);
+ind_all = zeros(p-1,p);
 for i = 1:p
        if i==1  
-       ind_noi = [2:p]'; 
+       ind = [2:p]'; 
       elseif i==p
-       ind_noi = [1:p-1]'; 
+       ind = [1:p-1]'; 
       else
-       ind_noi = [1:i-1,i+1:p]';
+       ind = [1:i-1,i+1:p]';
        end
        
-       ind_noi_all(:,i) = ind_noi;
+       ind_all(:,i) = ind;
 end
 
 % set initial values
@@ -47,11 +47,11 @@ for iter = 1: burnin+nmc
        
 %%% sample Sigma and Omega=inv(Sigma)
     for i = 1:p
-      ind_noi = ind_noi_all(:,i);     
-      Sigma_11 = Sigma(ind_noi,ind_noi); sigma_12 = Sigma(ind_noi,i);
+      ind = ind_all(:,i);     
+      Sigma_11 = Sigma(ind,ind); sigma_12 = Sigma(ind,i);
       sigma_22 = Sigma(i,i);
-      s_21 = S(ind_noi,i); s_22 = S(i,i);
-      lambda_sq_12 = Lambda_sq(ind_noi,i); nu_12 = Nu(ind_noi,i);
+      s_21 = S(ind,i); s_22 = S(i,i);
+      lambda_sq_12 = Lambda_sq(ind,i); nu_12 = Nu(ind,i);
       %% sample gamma and beta
       gamma = gamrnd((n/2+1),2/s_22);    % random gamma with shape=n/2+1, rate=s_22/2
       inv_Omega_11 = Sigma_11 - sigma_12*sigma_12'/sigma_22;
@@ -65,15 +65,15 @@ for iter = 1: burnin+nmc
       lambda_sq_12 = 1./gamrnd(1,1./rate);    % random inv gamma with shape=1, rate=rate
       nu_12 = 1./gamrnd(1,1./(1+1./lambda_sq_12));    % random inv gamma with shape=1, rate=1+1/lambda_sq_12
       %% update Omega, Sigma, Lambda_sq, Nu
-      Omega(i,ind_noi) = omega_12; Omega(ind_noi,i) = omega_12;
+      Omega(i,ind) = omega_12; Omega(ind,i) = omega_12;
       Omega(i,i) = omega_22;
       temp = inv_Omega_11*beta;
       Sigma_11 = inv_Omega_11 + temp*temp'/gamma;
       sigma_12 = -temp/gamma; sigma_22 = 1/gamma;
-      Sigma(ind_noi,ind_noi) = Sigma_11; Sigma(i,i) = sigma_22;
-      Sigma(i,ind_noi) = sigma_12; Sigma(ind_noi,i) = sigma_12;
-      Lambda_sq(i,ind_noi) = lambda_sq_12; Lambda_sq(ind_noi,i) = lambda_sq_12;
-      Nu(i,ind_noi) = nu_12; Nu(ind_noi,i) = nu_12;
+      Sigma(ind,ind) = Sigma_11; Sigma(i,i) = sigma_22;
+      Sigma(i,ind) = sigma_12; Sigma(ind,i) = sigma_12;
+      Lambda_sq(i,ind) = lambda_sq_12; Lambda_sq(ind,i) = lambda_sq_12;
+      Nu(i,ind) = nu_12; Nu(ind,i) = nu_12;
     end
     
 %%% sample tau_sq and xi
